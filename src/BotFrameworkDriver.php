@@ -40,9 +40,7 @@ class BotFrameworkDriver extends HttpDriver
      */
     public function matchesRequest()
     {
-        $noAttachments = Collection::make($this->event->get('attachments'))->isEmpty();
-
-        return $noAttachments && (! is_null($this->event->get('recipient')) && ! is_null($this->event->get('serviceUrl')));
+        return (! is_null($this->event->get('recipient')) && ! is_null($this->event->get('serviceUrl')));
     }
 
     /**
@@ -73,7 +71,9 @@ class BotFrameworkDriver extends HttpDriver
         // replace bot's name for group chats and special characters that might be sent from Web Skype
         $pattern = '/<at id=(.*?)at>[^(\x20-\x7F)\x0A]*\s*/';
         $message = preg_replace($pattern, '', $this->event->get('text'));
-
+        // Remove bot's name in Teams chat
+        $message = preg_replace('/<at>.*?<\/at>\s+/', '', $message);
+        trigger_error($message);
         if (empty($this->messages)) {
             $this->messages = [
                 new IncomingMessage($message, $this->event->get('from')['id'], $this->event->get('conversation')['id'],
