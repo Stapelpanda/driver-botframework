@@ -72,8 +72,8 @@ class BotFrameworkDriver extends HttpDriver
         $pattern = '/<at id=(.*?)at>[^(\x20-\x7F)\x0A]*\s*/';
         $message = preg_replace($pattern, '', $this->event->get('text'));
         // Remove bot's name in Teams chat
-        $message = preg_replace('/<at>.*?<\/at>\s+/', '', $message);
-        trigger_error($message);
+        $message = preg_replace('/^<at>.*?<\/at>\s+/', '', $message);
+        
         if (empty($this->messages)) {
             $this->messages = [
                 new IncomingMessage($message, $this->event->get('from')['id'], $this->event->get('conversation')['id'],
